@@ -15,6 +15,7 @@ int main(void) {
     int numCars = 0;
     int numHrs = 0;
     int totalHrs = 0;
+    double amountCharged = 0;
     bool isValid = false;
     
     //start asking for inputs
@@ -38,6 +39,15 @@ int main(void) {
             isValid = scanf("%d", &numHrs);
             
         } //answer whould now be valid
+        
+        //putting charges here because doesnt make sense else where
+        if(numHrs <=3 && numHrs > 0) {
+            amountCharged += 2.00;
+        } else if (numHrs > 3 && numHrs <= 19) {
+            int toCharge = numHrs - 3;
+            amountCharged = 2.00 + (double)toCharge*0.50;
+        }
+        
         //tally up the hours and number of cars
         totalHrs += numHrs;
         numCars++;
