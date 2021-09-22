@@ -46,7 +46,7 @@ int main(void) {
     //correct hours for the final value of -1
     totalHrs = totalHrs + 1;
     
-    
+    //testing
     //dont forget main returns int
     return 0;
 } //main
