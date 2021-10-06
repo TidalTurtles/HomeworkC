@@ -18,26 +18,30 @@
 
 //prototypes
 void getGrades(int grades[][GRADES], size_t pupils, size_t scores);
-void displayGrades(int grades[][GRADES], size_t pupils, size_t scores);
+void displayGrades(const int grades[][GRADES], size_t pupils, size_t scores);
 double finalGrades(int grades[][GRADES], size_t pupils, size_t scores);
-void printFinals(double finals[], size_t scores);
-double averageGrade(double finals[], size_t scores);
-void displayAverage(double average);
+void printFinals(const double finals[], size_t scores); //check
+double averageGrade(const double finals[], size_t scores); // check
+void displayAverage(const double average); //check
 
 //main
 int main() {
     
     //int studentGrades[STUDENTS][GRADES];
-    double finals[] = {55.5, 77.6, 89.3, 99, 61.4};
-    double studentAverage = averageGrade(finals, 5);
+    double finals[] = {55.5, 77.6, 89.3, 99, 61.4, 87.6, 55, 89, 92.7, 78.54};
+    printFinals(finals, STUDENTS);
+    double studentAverage = averageGrade(finals, STUDENTS);
     displayAverage(studentAverage);
     
     return 0;
 }
 
 //get grades
-
-
+void getGrades(int grades[][GRADES], size_t pupils, size_t scores){
+    
+    
+    
+}
 
 //display grades table
 
@@ -52,11 +56,18 @@ int main() {
 
 
 //print display
-
-
+void printFinals(const double finals[], size_t scores) {
+    
+    printf("%s\n", "Final Grades");
+    for(size_t i = 0; i < scores; i++) {
+        printf("%.1f\t", finals[i]);
+    }
+    printf("\n\n");
+    
+}
 
 //calc average
-double averageGrade(double finals[], size_t scores) {
+double averageGrade(const double finals[], size_t scores) {
     
     double average = 0;
     
@@ -69,9 +80,11 @@ double averageGrade(double finals[], size_t scores) {
 }
 
 //display average
-void displayAverage(double average) {
+void displayAverage(const double average) {
     
+    printf("%s\n", "Average Grade for this Class");
     printf("%.1f\n", average);
+    printf("\n");
     
 }
 
