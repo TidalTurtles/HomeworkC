@@ -17,9 +17,9 @@
 #define FINAL 0.15
 
 //prototypes
-void getGrades(int grades[][GRADES], size_t pupils, size_t scores);
-void displayGrades(const int grades[][GRADES], size_t pupils, size_t scores);
-double finalGrades(int grades[][GRADES], size_t pupils, size_t scores);
+void getGrades(int grades[][GRADES], size_t pupils, size_t scores); //check
+void displayGrades(const int grades[][GRADES], size_t pupils, size_t scores);//check
+double finalGrades(int grades[][GRADES], size_t pupils, size_t scores); //check
 void printFinals(const double finals[], size_t scores); //check
 double averageGrade(const double finals[], size_t scores); // check
 void displayAverage(const double average); //check
@@ -27,10 +27,16 @@ void displayAverage(const double average); //check
 //main
 int main() {
     
-    //int studentGrades[STUDENTS][GRADES];
-    double finals[] = {55.5, 77.6, 89.3, 99, 61.4, 87.6, 55, 89, 92.7, 78.54};
-    printFinals(finals, STUDENTS);
-    double studentAverage = averageGrade(finals, STUDENTS);
+    int studentGrades[STUDENTS][GRADES];
+    getGrades(studentGrades, STUDENTS, GRADES);
+    displayGrades(studentGrades, STUDENTS, GRADES);
+    printf("\n");
+    double finalGrade[STUDENTS];
+    for(size_t i = 0; i < STUDENTS; i++) {
+        finalGrade[i] = finalGrades(studentGrades, i, GRADES);
+    }
+    printFinals(finalGrade, STUDENTS);
+    double studentAverage = averageGrade(finalGrade, STUDENTS);
     displayAverage(studentAverage);
     
     return 0;
@@ -39,21 +45,60 @@ int main() {
 //get grades
 void getGrades(int grades[][GRADES], size_t pupils, size_t scores){
     
-    
+    for(unsigned i = 0; i < pupils; i++) {
+        
+        printf("%s%u\n", "Enter Grades for Sturdent ", i+1);
+        for(unsigned j = 0; j < scores; j++) {
+            printf("%s%u\t", "Enter grade ", j+1);
+            scanf("%d", &grades[i][j]);
+        }
+        
+    }
     
 }
 
 //display grades table
-
+void displayGrades(const int grades[][GRADES], size_t pupils, size_t scores) {
+    
+    for (unsigned i = 0; i < pupils; i++) {
+        printf("%s%u\n", "Student ", i+1);
+        for (unsigned j = 0; j < scores; j++) {
+            printf("%d\t", grades[i][j]);
+        }
+        printf("\n");
+    }
+    
+}
 
 
 //calculate final grades
-
-
-
-//display final grades table
-
-
+double finalGrades(int grades[][GRADES], size_t pupils, size_t scores) {
+    
+    double final = 0;
+    for (size_t i = 0; i < scores; i++) {
+        switch (i) {
+            case 0:
+                final += grades[pupils][i] * CLASS;
+                break;
+            case 1:
+                final += grades[pupils][i] * ASSIGNMENT;
+                break;
+            case 2:
+                final += grades[pupils][i] * PROJECT;
+                break;
+            case 3:
+                final += grades[pupils][i] * MIDTERM;
+                break;
+            case 4:
+                final += grades[pupils][i] * FINAL;
+                break;
+            default:
+                break;
+        }
+    }
+    return final;
+    
+}
 
 //print display
 void printFinals(const double finals[], size_t scores) {
