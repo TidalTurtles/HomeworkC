@@ -34,6 +34,13 @@ int main(void) {
     bool user1 = getPin(ADMIN);
     double workingPrice;
     double workingPercent;
+    //user story 3 vars
+    double totalSales = 0;
+    double totalAmountRaised;
+    char shirtSize;
+    char shirtColor;
+    
+    
     
     //user story 1
     while(user1) {
@@ -54,18 +61,35 @@ int main(void) {
         }
         printf("Percentage set to %s %.2f \n", "%", workingPercent);
         
+        //user story 3
+        bool user3 = false;
+        while (!user3) {
+            
+            bool checkSize = false;
+            while(!checkSize){
+                shirtSize = getLetter(1);
+                printf("Is %c the correct size?", shirtSize);
+                checkSize = yesNo();
+            } //while size
+            
+            bool checkColor = false;
+            
+            if(shirtSize == 'q'){
+                
+            } else {
+                while(!checkColor){
+                    shirtColor = getLetter(2);
+                    printf("Is %c the correct color?", shirtColor);
+                    checkColor = yesNo();
+                } //while color
+            } // if q
+        }
+        
         user1 = false;
         
     } // user1 check
     
     printf("%s\n", "Exiting program now");
-    
-    //user story 3 vars
-    double totalSales = 0;
-    double totalAmountRaised = totalSales * workingPercent;
-    
-    //user story 3
-    
     
     return 0;
 }
@@ -164,16 +188,27 @@ char getLetter(int type) {
             scanf("%c", &userInput);
             while((getchar()) != '\n');
             
+            if(tolower(userInput) != 's' && tolower(userInput) != 'm' && tolower(userInput) != 'l' && tolower(userInput) != 'x' && tolower(userInput) != 'q') {
+                printf("%s\n", "Invalid input");
+            } else {
+                goodLetter = true;
+            }
+            
         } else if (type == 2) { //type 2 is color
             
             printf("%s\n", "Enter shirt color wanted (B)lack or (W)hite");
             scanf("%c", &userInput);
             while((getchar()) != '\n');
             
-        } else { //you're wrong
-            printf("%s\n", "Invalid input");
+            if(tolower(userInput) != 'b' && tolower(userInput) != 'w') {
+                printf("%s\n", "Invalid input");
+            } else {
+                goodLetter = true;
+            }
+            
         }//if
+        
     }
-    return 'c';
+    return userInput;
     
 }
