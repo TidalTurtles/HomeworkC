@@ -23,8 +23,8 @@
 //prototypes
 bool getPin(int correctPin); //working
 double getNumber(int type, int minNum, int maxNum); //working for price and percent
-char getLetter(int type);
-bool getZip(int zipCode);
+char getLetter(int type); //working
+bool getZip(void);
 bool yesNo(void); //working
 
 // getting started
@@ -34,13 +34,12 @@ int main(void) {
     bool user1 = getPin(ADMIN);
     double workingPrice;
     double workingPercent;
+    
     //user story 3 vars
     double totalSales = 0;
     double totalAmountRaised;
     char shirtSize;
     char shirtColor;
-    
-    
     
     //user story 1
     while(user1) {
@@ -59,7 +58,7 @@ int main(void) {
             printf("Is %.0f the correct percentage? \n", (workingPercent * 100));
             percentCheck = yesNo();
         }
-        printf("Percentage set to %s %.2f \n", "%", workingPercent);
+        printf("Percentage set to %s %.2f \n", "%", (workingPercent*100));
         
         //user story 3
         bool user3 = false;
@@ -68,22 +67,49 @@ int main(void) {
             bool checkSize = false;
             while(!checkSize){
                 shirtSize = getLetter(1);
-                printf("Is %c the correct size?", shirtSize);
+                printf("Is %c the correct size?\n", shirtSize);
                 checkSize = yesNo();
             } //while size
             
             bool checkColor = false;
             
             if(shirtSize == 'q'){
+                bool checkProgress = getPin(ADMIN);
+                while(checkProgress) {
+                    totalAmountRaised = totalSales * workingPercent;
+                    printf("Total sales was %f\n", totalSales);
+                    printf("Money made for organization is %f\n", totalAmountRaised);
+                    checkProgress = false;
+                }//while checking progress.
                 
             } else {
+                
                 while(!checkColor){
                     shirtColor = getLetter(2);
-                    printf("Is %c the correct color?", shirtColor);
+                    printf("Is %c the correct color?\n", shirtColor);
                     checkColor = yesNo();
                 } //while color
+                
             } // if q
-        }
+            
+            //payment (ie zip code)
+            getZip();
+            totalSales += workingPrice;
+            totalAmountRaised = totalSales * workingPercent;
+            printf("%s\n", "Would you like a recipt");
+            bool recipt = yesNo();
+            
+            if(recipt == true) {
+                // create random number
+                printf("Your shirt size was %c in the color %c\n", shirtSize, shirtColor);
+                printf("The cost of the shirt will be $%.2f\n", workingPrice);
+                printf("The amount towards the fundraiser will be %.2f\n", (workingPercent*100));
+                printf("The fundraiser has made $%.2f so far \n", totalAmountRaised);
+            }
+            
+            user3 = true;
+            
+        } //user 3
         
         user1 = false;
         
@@ -92,7 +118,8 @@ int main(void) {
     printf("%s\n", "Exiting program now");
     
     return 0;
-}
+} // main
+
 
 bool getPin(int correctPin) { //return whether or not pin was correct
     
@@ -168,7 +195,7 @@ bool yesNo(void){
             needThis = false;
             getOut = true;
         } else {
-            printf("%s", "Invalid input");
+            printf("%s\n", "Invalid input");
         }//if
     }//while
     
@@ -210,5 +237,22 @@ char getLetter(int type) {
         
     }
     return userInput;
+    
+}
+
+bool getZip(void) {
+    
+    bool isValid = false;
+    int zipCode;
+    
+    while(!isValid) {
+        printf("%s", "Enter your zip to complete.");
+        isValid = scanf("%5d", &zipCode);
+        if (!isValid) {
+            printf("%s", "Invalid zip");
+        }
+    } //while valid
+    
+    return true;
     
 }
