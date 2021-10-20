@@ -12,6 +12,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <ctype.h>
+#include <time.h>
+#include <stdlib.h>
 
 // overarching vars
 #define ADMIN 81405
@@ -96,18 +98,24 @@ int main(void) {
             getZip();
             totalSales += workingPrice;
             totalAmountRaised = totalSales * workingPercent;
-            printf("%s\n", "Would you like a recipt");
+            printf("%s\n", "Would you like a recipt?");
             bool recipt = yesNo();
             
             if(recipt == true) {
-                // create random number
+                srand(time(NULL));
+                int order = rand();
+                printf("Order Number: %d\n", order);
                 printf("Your shirt size was %c in the color %c\n", shirtSize, shirtColor);
                 printf("The cost of the shirt will be $%.2f\n", workingPrice);
                 printf("The amount towards the fundraiser will be %.2f\n", (workingPercent*100));
                 printf("The fundraiser has made $%.2f so far \n", totalAmountRaised);
             }
             
-            user3 = true;
+            printf("%s", "Would you like to order another?");
+            bool keepGoing = yesNo();
+            if(keepGoing == false) {
+                user3 = true;
+            }
             
         } //user 3
         
@@ -182,7 +190,6 @@ bool yesNo(void){
     bool needThis;
     bool getOut = false;
     
-    
     while(!getOut){
         
         scanf("%c", &yesOrNo);
@@ -245,14 +252,17 @@ bool getZip(void) {
     bool isValid = false;
     int zipCode;
     
-    while(!isValid) {
-        printf("%s", "Enter your zip to complete.");
-        isValid = scanf("%5d", &zipCode);
-        if (!isValid) {
-            printf("%s", "Invalid zip");
+    while(!isValid){
+        printf("%s\n", "Enter your zip code:");
+        scanf("%d", &zipCode);
+        while((getchar()) != '\n');
+        
+        if(zipCode < 10000 || zipCode > 99999) {
+            printf("%s\n", "Invalid zip");
+        } else {
+            isValid = true;
         }
-    } //while valid
-    
-    return true;
+    }
+    return isValid;
     
 }
