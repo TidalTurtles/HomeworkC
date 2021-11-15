@@ -50,7 +50,7 @@ int main(void) {
     FILE *tShirtFunds;
     
     //if alread a file read in sales amounts
-    char *blank = "filler";
+    /*char *blank = "filler";
     if((tShirtFunds = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/tshirtfunds.txt", "r"))) {
         puts("File could not be read or does not exist");
     } else {
@@ -59,6 +59,7 @@ int main(void) {
     }
     
     fclose(tShirtFunds);
+     */
     
     //user story 1
     while(user1) {
@@ -104,6 +105,10 @@ int main(void) {
                     }
                     user3 = true;
                     checkProgress = false;
+                    
+                    //close files
+                    fclose(tShirtFunds);
+                    
                 }//while checking progress.
                 
             } else {
@@ -117,7 +122,7 @@ int main(void) {
             } // if q
             
             //payment (ie zip code)
-            getZip();
+            getCardNum();
             totalSales += workingPrice;
             totalAmountRaised = totalSales * workingPercent;
             printf("%s\n", "Would you like a recipt?");
@@ -155,9 +160,6 @@ int main(void) {
     } // user1 check
     
     printf("%s\n", "Exiting program now");
-    
-    //close files
-    fclose(tShirtFunds);
     
     return 0;
 } // main
@@ -305,7 +307,20 @@ bool getZip(void) {
 
 bool getCardNum(void) {
     
-    return true; //place holder
+    bool isValid = false;
+    char *cardNum[20];
+    
+    while(!isValid) {
+        
+        puts("Enter your credit card number (####-####-####-####)");
+        isValid = scanf("%4d-%4d-%4d-%4d", cardNum);
+        if(isValid == false) {
+            puts("Invalid card number");
+        }
+        
+    }
+    
+    return isValid; //place holder
     
 } //card number
 
