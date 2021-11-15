@@ -17,17 +17,19 @@
 
 // overarching vars
 #define ADMIN 81405
-#define MINPRICE 10
+#define MINPRICE 20
 #define MAXPRICE 50
-#define MINPERCENT 0
-#define MAXPERCENT 100
+#define MINPERCENT 5
+#define MAXPERCENT 20
 
 //prototypes
-bool getPin(int correctPin); //working
-double getNumber(int type, int minNum, int maxNum); //working for price and percent
-char getLetter(int type); //working
-bool getZip(void);
-bool yesNo(void); //working
+bool getPin(int correctPin); //working //corrections made
+double getNumber(int type, int minNum, int maxNum); //working for price and percent //corrections made
+char getLetter(int type); //working // corrections made
+bool getZip(void); //working //now don't need
+bool yesNo(void); //working // no corrections needed
+bool getCardNum(void);
+void validateFloat(const char *buff);
 
 // getting started
 int main(void) {
@@ -42,6 +44,21 @@ int main(void) {
     double totalAmountRaised;
     char shirtSize;
     char shirtColor;
+    
+    //NEW: file for receipt
+    FILE *receiptFile;
+    FILE *tShirtFunds;
+    
+    //if alread a file read in sales amounts
+    char *blank = "filler";
+    if((tShirtFunds = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/tshirtfunds.txt", "r"))) {
+        puts("File could not be read or does not exist");
+    } else {
+        fscanf(tShirtFunds, "%s%lf", blank, &totalSales);
+        fscanf(tShirtFunds, "%s%lf", blank, &totalAmountRaised);
+    }
+    
+    fclose(tShirtFunds);
     
     //user story 1
     while(user1) {
@@ -79,8 +96,13 @@ int main(void) {
                 bool checkProgress = getPin(ADMIN);
                 while(checkProgress) {
                     totalAmountRaised = totalSales * workingPercent;
-                    printf("Total sales was %f\n", totalSales);
-                    printf("Money made for organization is %f\n", totalAmountRaised);
+                    if((tShirtFunds = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/tshirtfunds.txt", "w"))) {
+                        puts("File could not be opened");
+                    } else {
+                        fprintf(tShirtFunds, "Total sales was %f\n", totalSales);
+                        fprintf(tShirtFunds, "Money made for organization is %f\n", totalAmountRaised);
+                    }
+                    user3 = true;
                     checkProgress = false;
                 }//while checking progress.
                 
@@ -104,11 +126,20 @@ int main(void) {
             if(recipt == true) {
                 srand(time(NULL));
                 int order = rand();
-                printf("Order Number: %d\n", order);
-                printf("Your shirt size was %c in the color %c\n", shirtSize, shirtColor);
-                printf("The cost of the shirt will be $%.2f\n", workingPrice);
-                printf("The amount towards the fundraiser will be %.2f\n", (workingPercent*100));
-                printf("The fundraiser has made $%.2f so far \n", totalAmountRaised);
+                
+                if((receiptFile = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/receipt.txt", "w"))) {
+                    puts("File could not be opened");
+                } else {
+                    fprintf(receiptFile, "Order Number: %d\n", order);
+                    fprintf(receiptFile, "Your shirt size was %c in the color %c\n", shirtSize, shirtColor);
+                    fprintf(receiptFile, "The cost of the shirt will be $%.2f\n", workingPrice);
+                    fprintf(receiptFile, "The amount towards the fundraiser will be %.2f\n", (workingPercent*100));
+                    fprintf(receiptFile, "The fundraiser has made $%.2f so far \n", totalAmountRaised);
+                    fprintf(receiptFile, "\n"); //new line to seperate orders
+                }
+                
+                fclose(receiptFile);
+                
             }
             
             printf("%s", "Would you like to order another?");
@@ -125,6 +156,9 @@ int main(void) {
     
     printf("%s\n", "Exiting program now");
     
+    //close files
+    fclose(tShirtFunds);
+    
     return 0;
 } // main
 
@@ -135,7 +169,7 @@ bool getPin(int correctPin) { //return whether or not pin was correct
     int counter = 0;
     bool isCorrect = false;
     
-    while(!isCorrect && counter != 3) {
+    while(!isCorrect && counter != 4) {
         
         printf("%s\n", "Please enter your pin number");
         scanf("%d", &pinNumber);
@@ -157,18 +191,20 @@ bool getPin(int correctPin) { //return whether or not pin was correct
 double getNumber(int type, int minNum,  int maxNum) {
     
     float getThis = 0;
+    char *readIn[6]; //six in case of 25.25
     bool inRange = false;
     
     while( !inRange ) {
         if(type == 1) { //number type 1 price
             
             printf("%s\n", "Enter price amount from 20-50");
-            scanf("%f", &getThis);
+            fgets(*readIn, 6, stdin);
             while((getchar()) != '\n');
+            
             
         } else if(type == 2) { // number type 2 is percent
             
-            printf("%s\n", "Enter percent amount from 0-100");
+            printf("%s\n", "Enter percent amount from 5-20");
             scanf("%f", &getThis);
             while((getchar()) != '\n');
             
@@ -230,11 +266,11 @@ char getLetter(int type) {
             
         } else if (type == 2) { //type 2 is color
             
-            printf("%s\n", "Enter shirt color wanted (B)lack or (W)hite");
+            printf("%s\n", "Enter shirt color wanted Blac(k), (W)hite, (R)ed, (B)lue, or (P)urple ");
             scanf("%c", &userInput);
             while((getchar()) != '\n');
             
-            if(tolower(userInput) != 'b' && tolower(userInput) != 'w') {
+            if(tolower(userInput) != 'b' && tolower(userInput) != 'w' && tolower(userInput) != 'k' && tolower(userInput) != 'r' &&tolower(userInput) != 'p') {
                 printf("%s\n", "Invalid input");
             } else {
                 goodLetter = true;
@@ -266,3 +302,21 @@ bool getZip(void) {
     return isValid;
     
 }
+
+bool getCardNum(void) {
+    
+    return true; //place holder
+    
+} //card number
+
+void validateFloat(const char *buff) {
+    
+    char *end;
+    float validFloat = 0;
+    float floatTest = strtol(buff, &end, 10);
+    
+    if(end == buff) {
+        
+    }
+    
+} //validate float
