@@ -1,2 +1,2 @@
-Total sales was 0.000000
-Money made for organization is 0.000000
+sales 34.55
+raised 3.46

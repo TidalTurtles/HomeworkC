@@ -52,17 +52,17 @@ int main(void) {
     FILE *tShirtFunds;
     
     //if alread a file read in sales amounts
-    /*
+    
     char *blank = "filler";
     if((tShirtFunds = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/tshirtfunds.txt", "r")) == NULL) {
         puts("File could not be read or does not exist");
     } else {
-        fscanf(tShirtFunds, "%16s%lf", blank, &totalSales);
-        fscanf(tShirtFunds, "%31s%lf", blank, &totalAmountRaised);
+        fscanf(tShirtFunds, "%s %lf\n", blank, &totalSales);
+        fscanf(tShirtFunds, "%s %lf\n", blank, &totalAmountRaised);
     }
     
     fclose(tShirtFunds);
-     */
+    
     
     
     //user story 1
@@ -104,8 +104,8 @@ int main(void) {
                     if((tShirtFunds = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/tshirtfunds.txt", "w")) == NULL) {
                         puts("File could not be opened");
                     } else {
-                        fprintf(tShirtFunds, "Total sales was %.2lf\n", totalSales);
-                        fprintf(tShirtFunds, "Money made for organization is %.2lf\n", totalAmountRaised);
+                        fprintf(tShirtFunds, "%s %.2lf\n", "sales", totalSales);
+                        fprintf(tShirtFunds, "%s %.2lf\n", "raised", totalAmountRaised);
                     }
                     
                     //close files
