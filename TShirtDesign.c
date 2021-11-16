@@ -14,6 +14,8 @@
 #include <ctype.h>
 #include <time.h>
 #include <stdlib.h>
+#include <float.h>
+#include <errno.h>
 
 // overarching vars
 #define ADMIN 81405
@@ -324,8 +326,9 @@ bool getCardNum(void) {
     
 } //card number
 
-void validateFloat(const char *buff) {
+bool validateFloat(const char *buff) { //also add double pointer
     
+    bool isValid = false;
     char *end;
     float validFloat = 0;
     float floatTest = strtol(buff, &end, 10);
@@ -333,5 +336,7 @@ void validateFloat(const char *buff) {
     if(end == buff) {
         
     }
+    
+    return isValid;
     
 } //validate float
