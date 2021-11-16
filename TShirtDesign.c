@@ -102,8 +102,8 @@ int main(void) {
                     if((tShirtFunds = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/tshirtfunds.txt", "w")) == NULL) {
                         puts("File could not be opened");
                     } else {
-                        fprintf(tShirtFunds, "Total sales was %f\n", totalSales);
-                        fprintf(tShirtFunds, "Money made for organization is %f\n", totalAmountRaised);
+                        fprintf(tShirtFunds, "Total sales was %.2f\n", totalSales);
+                        fprintf(tShirtFunds, "Money made for organization is %.2f\n", totalAmountRaised);
                     }
                     
                     //close files
