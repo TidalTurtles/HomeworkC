@@ -31,7 +31,7 @@ char getLetter(int type); //working // corrections made
 bool getZip(void); //working //now don't need
 bool yesNo(void); //working // no corrections needed
 bool getCardNum(void);
-void validateFloat(const char *buff);
+bool validateFloat(const char *buff, double *makeMe);
 
 // getting started
 int main(void) {
@@ -77,7 +77,7 @@ int main(void) {
         bool percentCheck = false;
         while(!percentCheck) {
             workingPercent = getNumber(2, MINPERCENT, MAXPERCENT) / 100;
-            printf("Is %.0f the correct percentage? \n", (workingPercent * 100));
+            printf("Is %.2f the correct percentage? \n", (workingPercent * 100));
             percentCheck = yesNo();
         }
         printf("Percentage set to %s %.2f \n", "%", (workingPercent*100));
@@ -194,23 +194,37 @@ bool getPin(int correctPin) { //return whether or not pin was correct
 
 double getNumber(int type, int minNum,  int maxNum) {
     
-    float getThis = 0;
+    double getThis = 0;
     char *readIn[6]; //six in case of 25.25
     bool inRange = false;
+    double *getThisPtr = &getThis;
     
     while( !inRange ) {
         if(type == 1) { //number type 1 price
-            
-            printf("%s\n", "Enter price amount from 20-50");
-            fgets(*readIn, 6, stdin);
-            while((getchar()) != '\n');
-            
-            
+                        
+            bool checkInput = false;
+            while(!checkInput) {
+                printf("%s\n", "Enter price amount from 20-50 (format ##.##)");
+                fgets(readIn, 6, stdin);
+                while((getchar()) != '\n');
+                
+                checkInput = validateFloat(readIn, getThisPtr);
+                
+            }
+                        
         } else if(type == 2) { // number type 2 is percent
             
-            printf("%s\n", "Enter percent amount from 5-20");
-            scanf("%f", &getThis);
-            while((getchar()) != '\n');
+           
+            
+            bool checkInput = false;
+            while (!checkInput) {
+                printf("%s\n", "Enter percent amount from 5-20 (format ##.##)");
+                fgets(readIn, 6, stdin);
+                while((getchar()) != '\n');
+                
+                checkInput = validateFloat(readIn, getThisPtr);
+                
+            }
             
         } //type dependent
         
@@ -247,7 +261,7 @@ bool yesNo(void){
     }//while
     
     return needThis;
-}
+} //yesNO
 
 char getLetter(int type) {
     
@@ -278,14 +292,14 @@ char getLetter(int type) {
                 printf("%s\n", "Invalid input");
             } else {
                 goodLetter = true;
-            }
+            } //if else make lower case
             
-        }//if
+        }//if for type
         
-    }
+    } //while not good letters
     return userInput;
     
-}
+} //get letters
 
 bool getZip(void) {
     
@@ -301,11 +315,12 @@ bool getZip(void) {
             printf("%s\n", "Invalid zip");
         } else {
             isValid = true;
-        }
-    }
+        } // if else
+        
+    } //while not valid
     return isValid;
     
-}
+} // get zip
 
 bool getCardNum(void) {
     
@@ -318,23 +333,32 @@ bool getCardNum(void) {
         isValid = scanf("%4d-%4d-%4d-%4d", cardNum);
         if(isValid == false) {
             puts("Invalid card number");
-        }
+        } //if incorrect
         
-    }
+    } //while not valid
     
     return isValid; //place holder
     
 } //card number
 
-bool validateFloat(const char *buff) { //also add double pointer
+bool validateFloat(const char *buff, double *makeMe) { //also add double pointer
     
     bool isValid = false;
+    
+    //from example
+    errno = 0;
     char *end;
-    float validFloat = 0;
-    float floatTest = strtol(buff, &end, 10);
+    double doubleTest = strtod(buff, &end);
     
     if(end == buff) {
-        
+        printf(stderr, "%s: not a number\n:", buff);
+    } else if('\0' != *end) {
+        printf(stderr, "%s; extra characters at end of input: %s\n", buff, end);
+    } else if((DBL_MAX == doubleTest || DBL_MIN == doubleTest) && ERANGE == errno) {
+        printf(stderr, "%s out of range of type double\n", buff);
+    } else {
+        *makeMe = doubleTest;
+        isValid = true;
     }
     
     return isValid;
