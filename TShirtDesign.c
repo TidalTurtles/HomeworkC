@@ -52,6 +52,7 @@ int main(void) {
     FILE *tShirtFunds;
     
     //if alread a file read in sales amounts
+    /*
     char *blank = "filler";
     if((tShirtFunds = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/tshirtfunds.txt", "r")) == NULL) {
         puts("File could not be read or does not exist");
@@ -61,6 +62,7 @@ int main(void) {
     }
     
     fclose(tShirtFunds);
+     */
     
     
     //user story 1
@@ -208,7 +210,7 @@ double getNumber(int type, int minNum,  int maxNum) {
             while(!checkInput) {
                 printf("%s\n", "Enter price amount from 20-50 (format ##.##)");
                 fgets(readIn, 6, stdin);
-                while((getchar()) != '\n');
+                //while((getchar()) != '\n');
                 
                 checkInput = validateFloat(readIn, getThisPtr);
                 
@@ -220,7 +222,7 @@ double getNumber(int type, int minNum,  int maxNum) {
             while (!checkInput) {
                 printf("%s\n", "Enter percent amount from 5-20 (format ##.##)");
                 fgets(readIn, 6, stdin);
-                while((getchar()) != '\n');
+                //while((getchar()) != '\n');
                 
                 checkInput = validateFloat(readIn, getThisPtr);
                 
