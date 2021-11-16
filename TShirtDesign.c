@@ -52,8 +52,8 @@ int main(void) {
     FILE *tShirtFunds;
     
     //if alread a file read in sales amounts
-    /*char *blank = "filler";
-    if((tShirtFunds = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/tshirtfunds.txt", "r"))) {
+    char *blank = "filler";
+    if((tShirtFunds = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/tshirtfunds.txt", "r")) == NULL) {
         puts("File could not be read or does not exist");
     } else {
         fscanf(tShirtFunds, "%s%lf", blank, &totalSales);
@@ -61,7 +61,7 @@ int main(void) {
     }
     
     fclose(tShirtFunds);
-     */
+    
     
     //user story 1
     while(user1) {
@@ -72,7 +72,7 @@ int main(void) {
             printf("Is $%.2f the right price? \n", workingPrice);
             priceCheck = yesNo();
         }
-        printf("Shirt price set to $%.2f", workingPrice);
+        printf("Shirt price set to $%.2f\n", workingPrice);
         
         bool percentCheck = false;
         while(!percentCheck) {
@@ -99,17 +99,19 @@ int main(void) {
                 bool checkProgress = getPin(ADMIN);
                 while(checkProgress) {
                     totalAmountRaised = totalSales * workingPercent;
-                    if((tShirtFunds = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/tshirtfunds.txt", "w"))) {
+                    if((tShirtFunds = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/tshirtfunds.txt", "w")) == NULL) {
                         puts("File could not be opened");
                     } else {
                         fprintf(tShirtFunds, "Total sales was %f\n", totalSales);
                         fprintf(tShirtFunds, "Money made for organization is %f\n", totalAmountRaised);
                     }
-                    user3 = true;
-                    checkProgress = false;
                     
                     //close files
                     fclose(tShirtFunds);
+                    
+                    
+                    checkProgress = false;
+                    user3 = true;
                     
                 }//while checking progress.
                 
@@ -121,39 +123,39 @@ int main(void) {
                     checkColor = yesNo();
                 } //while color
                 
-            } // if q
-            
-            //payment (ie zip code)
-            getCardNum();
-            totalSales += workingPrice;
-            totalAmountRaised = totalSales * workingPercent;
-            printf("%s\n", "Would you like a recipt?");
-            bool recipt = yesNo();
-            
-            if(recipt == true) {
-                srand(time(NULL));
-                int order = rand();
+                //payment (ie zip code)
+                getCardNum();
+                totalSales += workingPrice;
+                totalAmountRaised = totalSales * workingPercent;
+                printf("%s\n", "Would you like a recipt?");
+                bool recipt = yesNo();
                 
-                if((receiptFile = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/receipt.txt", "w"))) {
-                    puts("File could not be opened");
-                } else {
-                    fprintf(receiptFile, "Order Number: %d\n", order);
-                    fprintf(receiptFile, "Your shirt size was %c in the color %c\n", shirtSize, shirtColor);
-                    fprintf(receiptFile, "The cost of the shirt will be $%.2f\n", workingPrice);
-                    fprintf(receiptFile, "The amount towards the fundraiser will be %.2f\n", (workingPercent*100));
-                    fprintf(receiptFile, "The fundraiser has made $%.2f so far \n", totalAmountRaised);
-                    fprintf(receiptFile, "\n"); //new line to seperate orders
+                if(recipt == true) {
+                    srand(time(NULL));
+                    int order = rand();
+                    
+                    if((receiptFile = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/receipt.txt", "w")) == NULL) {
+                        puts("File could not be opened");
+                    } else {
+                        fprintf(receiptFile, "Order Number: %d\n", order);
+                        fprintf(receiptFile, "Your shirt size was %c in the color %c\n", shirtSize, shirtColor);
+                        fprintf(receiptFile, "The cost of the shirt will be $%.2f\n", workingPrice);
+                        fprintf(receiptFile, "The amount towards the fundraiser will be %.2f\n", (workingPercent*100));
+                        fprintf(receiptFile, "The fundraiser has made $%.2f so far \n", totalAmountRaised);
+                        fprintf(receiptFile, "\n"); //new line to seperate orders
+                    }
+                    
+                    fclose(receiptFile);
+                    
                 }
                 
-                fclose(receiptFile);
+                printf("%s", "Would you like to order another?");
+                bool keepGoing = yesNo();
+                if(keepGoing == false) {
+                    user3 = true;
+                }// if continue
                 
-            }
-            
-            printf("%s", "Would you like to order another?");
-            bool keepGoing = yesNo();
-            if(keepGoing == false) {
-                user3 = true;
-            }
+            } // if q
             
         } //user 3
         
@@ -195,7 +197,7 @@ bool getPin(int correctPin) { //return whether or not pin was correct
 double getNumber(int type, int minNum,  int maxNum) {
     
     double getThis = 0;
-    char *readIn[6]; //six in case of 25.25
+    char readIn[6]; //six in case of 25.25
     bool inRange = false;
     double *getThisPtr = &getThis;
     
@@ -213,8 +215,6 @@ double getNumber(int type, int minNum,  int maxNum) {
             }
                         
         } else if(type == 2) { // number type 2 is percent
-            
-           
             
             bool checkInput = false;
             while (!checkInput) {
@@ -325,12 +325,17 @@ bool getZip(void) {
 bool getCardNum(void) {
     
     bool isValid = false;
-    char *cardNum[20];
+    int cardNum1[5];
+    int cardNum2[5];
+    int cardNum3[5];
+    int cardNum4[5];
     
     while(!isValid) {
         
         puts("Enter your credit card number (####-####-####-####)");
-        isValid = scanf("%4d-%4d-%4d-%4d", cardNum);
+        isValid = scanf("%4d*c%4d*c%4d*c%4d", cardNum1, cardNum2, cardNum3, cardNum4);
+        while((getchar()) != '\n');
+        
         if(isValid == false) {
             puts("Invalid card number");
         } //if incorrect
@@ -351,11 +356,11 @@ bool validateFloat(const char *buff, double *makeMe) { //also add double pointer
     double doubleTest = strtod(buff, &end);
     
     if(end == buff) {
-        printf(stderr, "%s: not a number\n:", buff);
+        printf("%s: not a number\n:", buff);
     } else if('\0' != *end) {
-        printf(stderr, "%s; extra characters at end of input: %s\n", buff, end);
+        printf("%s; extra characters at end of input: %s\n", buff, end);
     } else if((DBL_MAX == doubleTest || DBL_MIN == doubleTest) && ERANGE == errno) {
-        printf(stderr, "%s out of range of type double\n", buff);
+        printf("%s out of range of type double\n", buff);
     } else {
         *makeMe = doubleTest;
         isValid = true;
