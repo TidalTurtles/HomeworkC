@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <float.h>
 #include <errno.h>
+#include <string.h>
 
 // overarching vars
 #define ADMIN 81405
@@ -31,7 +32,7 @@ char getLetter(int type); //working // corrections made
 bool getZip(void); //working //now don't need
 bool yesNo(void); //working // no corrections needed
 bool getCardNum(void);
-bool validateFloat(const char *buff, double *makeMe);
+bool validateFloat(char *buff, double *makeMe);
 
 // getting started
 int main(void) {
@@ -53,12 +54,12 @@ int main(void) {
     
     //if alread a file read in sales amounts
     
-    char *blank = "filler";
+    
     if((tShirtFunds = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/tshirtfunds.txt", "r")) == NULL) {
         puts("File could not be read or does not exist");
     } else {
-        fscanf(tShirtFunds, "%s %lf\n", blank, &totalSales);
-        fscanf(tShirtFunds, "%s %lf\n", blank, &totalAmountRaised);
+        fscanf(tShirtFunds, "%lf", &totalSales);
+        fscanf(tShirtFunds, "%lf", &totalAmountRaised);
     }
     
     fclose(tShirtFunds);
@@ -104,8 +105,8 @@ int main(void) {
                     if((tShirtFunds = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/tshirtfunds.txt", "w")) == NULL) {
                         puts("File could not be opened");
                     } else {
-                        fprintf(tShirtFunds, "%s %.2lf\n", "sales", totalSales);
-                        fprintf(tShirtFunds, "%s %.2lf\n", "raised", totalAmountRaised);
+                        fprintf(tShirtFunds, "%.2lf\n", totalSales);
+                        fprintf(tShirtFunds, "%.2lf\n", totalAmountRaised);
                     }
                     
                     //close files
@@ -348,13 +349,18 @@ bool getCardNum(void) {
     
 } //card number
 
-bool validateFloat(const char *buff, double *makeMe) { //also add double pointer
+bool validateFloat(char *buff, double *makeMe) { //also add double pointer
     
     bool isValid = false;
     
     //from example
     errno = 0;
     char *end;
+    
+    if(buff[strlen(buff)-1] == '\n') {
+        buff[strlen(buff)-1] = '\0';
+    }
+    
     double doubleTest = strtod(buff, &end);
     
     if(end == buff) {
