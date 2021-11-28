@@ -28,7 +28,7 @@
 
 //iteration 3 part 3: structure
 typedef struct fundOrg {
-    char *orgName[NAMESIZE];
+    char orgName[NAMESIZE];
     double orgPrice;
     double orgPercent;
     struct fundOrg *nextOrg;
@@ -45,7 +45,7 @@ bool validateFloat(char *buff, double *makeMe);
 //iteration 3 prototypes (ie for linked list)
 void insertOrg(FundOrg **headPtr, FundOrg *addMe);
 void removeOrg(FundOrg **headPtr, char *removeMe[NAMESIZE]);
-int compareName(const FundOrg *firstOrg, const FundOrg *secondOrg);
+int compareName(FundOrg *firstOrg, FundOrg *secondOrg);
 
 
 // getting started
@@ -478,8 +478,8 @@ void removeOrg(FundOrg **headPtr, char *removeMe[NAMESIZE]) {
     
 } //remove org
 
-int compareName(const FundOrg *firstOrg, const FundOrg *secondOrg) {
+int compareName(FundOrg *firstOrg, FundOrg *secondOrg) {
     
-    return strcmp(*firstOrg->orgName, *secondOrg->orgName);
+    return strcmp(firstOrg->orgName, secondOrg->orgName);
     
 } //compareitor
