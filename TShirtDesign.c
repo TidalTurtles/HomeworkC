@@ -24,6 +24,15 @@
 #define MAXPRICE 50
 #define MINPERCENT 5
 #define MAXPERCENT 20
+#define NAMESIZE 20
+
+//iteration 3 part 3: structure
+typedef struct fundOrg {
+    char *orgName[NAMESIZE];
+    double orgPrice;
+    double orgPercent;
+    struct fundOrg *nextOrg;
+} FundOrg;
 
 //prototypes
 bool getPin(int correctPin); //working //corrections made
@@ -33,6 +42,11 @@ bool getZip(void); //working //now don't need
 bool yesNo(void); //working // no corrections needed
 bool getCardNum(void);
 bool validateFloat(char *buff, double *makeMe);
+//iteration 3 prototypes (ie for linked list)
+void insertOrg(FundOrg **headPtr, FundOrg *addMe);
+void removeOrg(FundOrg **headPtr, char *removeMe[NAMESIZE]);
+int compareName(const FundOrg *firstOrg, const FundOrg *secondOrg);
+
 
 // getting started
 int main(void) {
@@ -51,10 +65,11 @@ int main(void) {
     //NEW: file for receipt
     FILE *receiptFile;
     FILE *tShirtFunds;
+    struct fundOrg *headOrg = NULL;
     
     //if alread a file read in sales amounts
     
-    
+    /* Not needed for iteration 3
     if((tShirtFunds = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/tshirtfunds.txt", "r")) == NULL) {
         puts("File could not be read or does not exist");
     } else {
@@ -63,32 +78,53 @@ int main(void) {
     }
     
     fclose(tShirtFunds);
-    
+    */
     
     
     //user story 1
     while(user1) {
         
-        bool priceCheck = false;
-        while (!priceCheck) {
-            workingPrice = getNumber(1, MINPRICE, MAXPRICE);
-            printf("Is $%.2f the right price? \n", workingPrice);
-            priceCheck = yesNo();
-        }
-        printf("Shirt price set to $%.2f\n", workingPrice);
+        bool makingOrgs = true;
         
-        bool percentCheck = false;
-        while(!percentCheck) {
-            workingPercent = getNumber(2, MINPERCENT, MAXPERCENT) / 100;
-            printf("Is %.2f the correct percentage? \n", (workingPercent * 100));
-            percentCheck = yesNo();
-        }
-        printf("Percentage set to %s %.2f \n", "%", (workingPercent*100));
-        
+        while(makingOrgs) {
+            
+            struct fundOrg *makingOrg = NULL;
+            makingOrg = malloc(sizeof(struct fundOrg));
+            double aPrice;
+            double aPercent;
+            
+            puts("what is this organizations name?");
+            fgets(makingOrg->orgName, 19, stdin);
+            
+            bool priceCheck = false;
+            while (!priceCheck) {
+                aPrice = getNumber(1, MINPRICE, MAXPRICE);
+                printf("Is $%.2f the right price? \n", aPrice);
+                priceCheck = yesNo();
+            }
+            printf("Shirt price set to $%.2f\n", aPrice);
+            
+            bool percentCheck = false;
+            while(!percentCheck) {
+                aPercent = getNumber(2, MINPERCENT, MAXPERCENT) / 100;
+                printf("Is %.2f the correct percentage? \n", (aPercent * 100));
+                percentCheck = yesNo();
+            }
+            printf("Percentage set to %s %.2f \n", "%", (aPercent*100));
+            
+            makingOrg->orgPrice = aPrice;
+            makingOrg->orgPercent = aPercent;
+            
+            insertOrg(&headOrg, makingOrg);
+            
+            puts("Will you make another orginization?");
+            makingOrgs = yesNo();
+            
+        } //while setting orgs
         //user story 3
         bool user3 = false;
         while (!user3) {
-            
+                
             bool checkSize = false;
             while(!checkSize){
                 shirtSize = getLetter(1);
@@ -97,7 +133,7 @@ int main(void) {
             } //while size
             
             bool checkColor = false;
-            
+                
             if(shirtSize == 'q'){
                 bool checkProgress = getPin(ADMIN);
                 while(checkProgress) {
@@ -105,17 +141,16 @@ int main(void) {
                     if((tShirtFunds = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/tshirtfunds.txt", "w")) == NULL) {
                         puts("File could not be opened");
                     } else {
-                        fprintf(tShirtFunds, "%.2lf\n", totalSales);
-                        fprintf(tShirtFunds, "%.2lf\n", totalAmountRaised);
+                        fprintf(tShirtFunds, "%15s\t%.2lf\n", "Sales", totalSales);
+                        fprintf(tShirtFunds, "%15s\t%.2lf\n", "amount raised", totalAmountRaised);
                     }
-                    
+                        
                     //close files
                     fclose(tShirtFunds);
                     
-                    
                     checkProgress = false;
                     user3 = true;
-                    
+                        
                 }//while checking progress.
                 
             } else {
@@ -159,11 +194,11 @@ int main(void) {
                 }// if continue
                 
             } // if q
-            
+        
         } //user 3
         
-        user1 = false;
-        
+    user1 = false;
+    
     } // user1 check
     
     printf("%s\n", "Exiting program now");
@@ -377,3 +412,74 @@ bool validateFloat(char *buff, double *makeMe) { //also add double pointer
     return isValid;
     
 } //validate float
+
+//iteration 3
+//linked list functions
+
+void insertOrg(FundOrg **headPtr, FundOrg *addMe) {
+    
+    if(headPtr == NULL) { //nothing in list
+        *headPtr = addMe;
+    } else {
+        
+        //place holder values
+        FundOrg *currentOrg = *headPtr;
+        FundOrg *previousOrg = NULL;
+        
+        while (currentOrg != NULL && (compareName(currentOrg, addMe)) < 0) {
+            previousOrg = currentOrg;
+            currentOrg = previousOrg->nextOrg;
+        } //while finding spot
+        
+        if(previousOrg == NULL) {//if placing at head
+            
+            *headPtr = addMe;
+            
+        } else { 
+            
+            previousOrg->nextOrg = addMe;
+    
+        }// else put in spot
+        
+        //connect rest of list
+        addMe->nextOrg = currentOrg;
+        
+    } //else find a spot
+    
+} //insert org
+
+void removeOrg(FundOrg **headPtr, char *removeMe[NAMESIZE]) {
+    
+    //temp values
+    FundOrg *currentOrg = *headPtr;
+    FundOrg *previousOrg = NULL;
+    
+    if(strcmp(*currentOrg->orgName, *removeMe) == 0) { //if removing head
+        *headPtr = (*headPtr)->nextOrg;
+        free(currentOrg);
+        currentOrg = NULL;
+    } else {
+        
+        while(currentOrg != NULL && strcmp(*currentOrg->orgName, *removeMe) != 0) {
+            previousOrg = currentOrg;
+            currentOrg = previousOrg->nextOrg;
+        } //while searching
+        
+        if(currentOrg != NULL) { //if deleting this one
+            previousOrg->nextOrg = currentOrg->nextOrg;
+            free(currentOrg);
+            currentOrg = NULL;
+        } else {
+            puts("Org not in list");
+        } //not here
+        
+    } //else not head
+    
+    
+} //remove org
+
+int compareName(const FundOrg *firstOrg, const FundOrg *secondOrg) {
+    
+    return strcmp(*firstOrg->orgName, *secondOrg->orgName);
+    
+} //compareitor
