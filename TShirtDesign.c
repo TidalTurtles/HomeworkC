@@ -31,6 +31,8 @@ typedef struct fundOrg {
     char orgName[NAMESIZE];
     double orgPrice;
     double orgPercent;
+    double orgSales;
+    double orgEarned;
     struct fundOrg *nextOrg;
 } FundOrg;
 
@@ -46,6 +48,8 @@ bool validateFloat(char *buff, double *makeMe);
 void insertOrg(FundOrg **headPtr, FundOrg *addMe);
 void removeOrg(FundOrg **headPtr, char *removeMe[NAMESIZE]);
 int compareName(FundOrg *firstOrg, FundOrg *secondOrg);
+FundOrg findOrg(FundOrg **headPtr);
+void adminPrintOrgs(FundOrg **headPtr);
 
 
 // getting started
@@ -57,14 +61,13 @@ int main(void) {
     double workingPercent;
     
     //user story 3 vars
-    double totalSales = 0;
-    double totalAmountRaised;
+    
     char shirtSize;
     char shirtColor;
     
     //NEW: file for receipt
     FILE *receiptFile;
-    FILE *tShirtFunds;
+    
     struct fundOrg *headOrg = NULL;
     
     //if alread a file read in sales amounts
@@ -124,7 +127,12 @@ int main(void) {
         //user story 3
         bool user3 = false;
         while (!user3) {
-                
+            
+            FundOrg *supportMe = NULL;
+            //pick an org
+            *supportMe = findOrg(&headOrg);
+            
+            
             bool checkSize = false;
             while(!checkSize){
                 shirtSize = getLetter(1);
@@ -137,16 +145,8 @@ int main(void) {
             if(shirtSize == 'q'){
                 bool checkProgress = getPin(ADMIN);
                 while(checkProgress) {
-                    totalAmountRaised = totalSales * workingPercent;
-                    if((tShirtFunds = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/tshirtfunds.txt", "w")) == NULL) {
-                        puts("File could not be opened");
-                    } else {
-                        fprintf(tShirtFunds, "%15s\t%.2lf\n", "Sales", totalSales);
-                        fprintf(tShirtFunds, "%15s\t%.2lf\n", "amount raised", totalAmountRaised);
-                    }
-                        
-                    //close files
-                    fclose(tShirtFunds);
+                    
+                    adminPrintOrgs(&headOrg);
                     
                     checkProgress = false;
                     user3 = true;
@@ -163,8 +163,8 @@ int main(void) {
                 
                 //payment (ie zip code)
                 getCardNum();
-                totalSales += workingPrice;
-                totalAmountRaised = totalSales * workingPercent;
+                supportMe->orgSales += supportMe->orgPrice;
+                supportMe->orgEarned = supportMe->orgSales * supportMe->orgPercent;
                 printf("%s\n", "Would you like a recipt?");
                 bool recipt = yesNo();
                 
@@ -177,9 +177,9 @@ int main(void) {
                     } else {
                         fprintf(receiptFile, "Order Number: %d\n", order);
                         fprintf(receiptFile, "Your shirt size was %c in the color %c\n", shirtSize, shirtColor);
-                        fprintf(receiptFile, "The cost of the shirt will be $%.2f\n", workingPrice);
-                        fprintf(receiptFile, "The amount towards the fundraiser will be %.2f\n", (workingPercent*100));
-                        fprintf(receiptFile, "The fundraiser has made $%.2f so far \n", totalAmountRaised);
+                        fprintf(receiptFile, "The cost of the shirt will be $%.2f\n", supportMe->orgPrice);
+                        fprintf(receiptFile, "The amount towards the fundraiser will be %.2f\n", (supportMe->orgPercent*100));
+                        fprintf(receiptFile, "The fundraiser has made $%.2f so far \n", supportMe->orgEarned);
                         fprintf(receiptFile, "\n"); //new line to seperate orders
                     }
                     
@@ -193,7 +193,7 @@ int main(void) {
                     user3 = true;
                 }// if continue
                 
-            } // if q
+            } // if not admin
         
         } //user 3
         
@@ -478,13 +478,13 @@ void removeOrg(FundOrg **headPtr, char *removeMe[NAMESIZE]) {
     FundOrg *currentOrg = *headPtr;
     FundOrg *previousOrg = NULL;
     
-    if(strcmp(*currentOrg->orgName, *removeMe) == 0) { //if removing head
+    if(strcmp(currentOrg->orgName, *removeMe) == 0) { //if removing head
         *headPtr = (*headPtr)->nextOrg;
         free(currentOrg);
         currentOrg = NULL;
     } else {
         
-        while(currentOrg != NULL && strcmp(*currentOrg->orgName, *removeMe) != 0) {
+        while(currentOrg != NULL && strcmp(currentOrg->orgName, *removeMe) != 0) {
             previousOrg = currentOrg;
             currentOrg = previousOrg->nextOrg;
         } //while searching
@@ -507,3 +507,67 @@ int compareName(FundOrg *firstOrg, FundOrg *secondOrg) {
     return strcmp(firstOrg->orgName, secondOrg->orgName);
     
 } //compareitor
+
+FundOrg findOrg(FundOrg **headPtr) {
+    
+    
+    FundOrg *found = NULL;
+    
+    char findMe[NAMESIZE];
+    bool correct = false;
+    
+    while (!correct) {
+        
+        puts("Which org would you like to support?");
+        fgets(findMe, NAMESIZE, stdin);
+        FundOrg *lookingFor = *headPtr;
+    
+        while(lookingFor != NULL) {
+            
+            if(strcmp(lookingFor->orgName, findMe) == 0) {
+                found = lookingFor;
+                lookingFor = NULL;
+            } else {
+                lookingFor = lookingFor->nextOrg;
+            } //else keep looking
+            
+        } //while looking
+        
+        if(found == NULL) {
+            puts("Org not found!");
+        } else {//if not found
+            correct = true;
+        }
+    
+    } //while not correct
+    
+    return *found;
+    
+}
+
+
+void adminPrintOrgs(FundOrg **headPtr) {
+    
+    FundOrg *printMe = *headPtr;
+    
+    FILE *tShirtFunds;
+    
+    while(printMe != NULL) {
+        
+        printMe->orgEarned = printMe->orgSales * printMe->orgPercent;
+        if((tShirtFunds = fopen("/Users/noahholt/Desktop/Coding/C/CS2060/Homework1/Homework1/tshirtfunds.txt", "w")) == NULL) {
+            puts("File could not be opened");
+        } else {
+            fprintf(tShirtFunds, "Org Name:\t%20s\n", printMe->orgName);
+            fprintf(tShirtFunds, "%15s\t%.2lf\n", "Sales", printMe->orgSales);
+            fprintf(tShirtFunds, "%15s\t%.2lf\n\n", "amount raised", printMe->orgEarned);
+        } //if open
+            
+        printMe = printMe->nextOrg;
+        
+    } //while values
+    
+    //close files
+    fclose(tShirtFunds);
+    
+} //printing
