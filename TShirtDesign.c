@@ -364,15 +364,19 @@ bool getCardNum(void) {
     
     bool isValid = false;
     bool checking = true;
-    char *fullCard = NULL;
+    char fullCard[20];
     char *checkMe;
-    double cardNum;
+    double cardNum = 0;
+    int counter = 0;
     
     
     while(!isValid) {
         
+        //clear buffers if existed
+        
+        
         puts("Enter your credit card number (####-####-####-####)");
-        fgets(fullCard, 19, stdin);
+        fgets(fullCard, 20, stdin);
         
         //proper numbers
         while (checking) {
@@ -381,13 +385,18 @@ bool getCardNum(void) {
                 checkMe = strtok(fullCard, "-");
                 checking = validateFloat(checkMe, &cardNum);
                 if (!checking) {
-                    isValid = false;
-                }//if not checking
+                    counter++;
+                } //if true
+            } //for all numbers
+            
+            //if false occured counter is not 0
+            if(counter == 0) {
+                isValid = true;
             }
             //exit loop
             checking = false;
             
-        }
+        } // while checking
         
         if(isValid == false) {
             puts("Invalid card number");
