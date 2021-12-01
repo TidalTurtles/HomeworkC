@@ -363,16 +363,31 @@ bool getZip(void) {
 bool getCardNum(void) {
     
     bool isValid = false;
-    int cardNum1[5];
-    int cardNum2[5];
-    int cardNum3[5];
-    int cardNum4[5];
+    bool checking = true;
+    char *fullCard = NULL;
+    char *checkMe;
+    double cardNum;
+    
     
     while(!isValid) {
         
         puts("Enter your credit card number (####-####-####-####)");
-        isValid = scanf("%4d*c%4d*c%4d*c%4d", cardNum1, cardNum2, cardNum3, cardNum4);
-        while((getchar()) != '\n');
+        fgets(fullCard, 19, stdin);
+        
+        //proper numbers
+        while (checking) {
+            //for each number
+            for (size_t i = 0; i < 4; i++) {
+                checkMe = strtok(fullCard, "-");
+                checking = validateFloat(checkMe, &cardNum);
+                if (!checking) {
+                    isValid = false;
+                }//if not checking
+            }
+            //exit loop
+            checking = false;
+            
+        }
         
         if(isValid == false) {
             puts("Invalid card number");
