@@ -48,7 +48,7 @@ bool validateFloat(char *buff, double *makeMe);
 void insertOrg(FundOrg **headPtr, FundOrg *addMe);
 void removeOrg(FundOrg **headPtr, char *removeMe[NAMESIZE]);
 int compareName(FundOrg *firstOrg, FundOrg *secondOrg);
-FundOrg findOrg(FundOrg **headPtr);
+FundOrg* findOrg(FundOrg **headPtr);
 void adminPrintOrgs(FundOrg **headPtr);
 
 
@@ -130,7 +130,7 @@ int main(void) {
             
             FundOrg *supportMe = NULL;
             //pick an org
-            *supportMe = findOrg(&headOrg);
+            supportMe = findOrg(&headOrg);
             
             
             bool checkSize = false;
@@ -363,7 +363,6 @@ bool getZip(void) {
 bool getCardNum(void) {
     
     bool isValid = false;
-    bool checking = true;
     char fullCard[20];
     char *checkMe;
     double cardNum = 0;
@@ -373,34 +372,54 @@ bool getCardNum(void) {
     while(!isValid) {
         
         //clear buffers if existed
+        bool checking = true;
+        //check length 20
+        //check token length 4
+        //chenk double
         
         
         puts("Enter your credit card number (####-####-####-####)");
         fgets(fullCard, 20, stdin);
         
         //proper numbers
-        while (checking) {
-            //for each number
-            for (size_t i = 0; i < 4; i++) {
-                checkMe = strtok(fullCard, "-");
-                checking = validateFloat(checkMe, &cardNum);
-                if (!checking) {
-                    counter++;
-                } //if true
-            } //for all numbers
+        //change to do while as in notes on strings lecture 18
+        if(strlen(fullCard) != 20) {
+            //skip below
+        } else {
             
-            //if false occured counter is not 0
-            if(counter == 0) {
-                isValid = true;
-            }
-            //exit loop
-            checking = false;
+            checkMe = strtok(fullCard, "-");
             
-        } // while checking
-        
-        if(isValid == false) {
-            puts("Invalid card number");
-        } //if incorrect
+            while(checkMe != NULL && checking) {
+                
+                if(strlen(checkMe) != 4) {
+                    //exit while loop
+                    checking = false;
+                } else {
+                    
+                    //check number
+                    checking = validateFloat(checkMe, &cardNum);
+                    if(checking) {
+                        counter++;
+                    } //increment counter
+                    
+                    //resset token
+                    checkMe = strtok(NULL, "-");
+                    
+                    //now exit if four are good
+                    if(counter == 4) {
+                        checking = false;
+                    } //if counter full
+                    
+                }//else can check number
+                
+            } //while have tokens
+            
+            
+            if(isValid == false) {
+                puts("Invalid card number");
+            } //if incorrect
+            
+        } //if right length
         
     } //while not valid
     
@@ -508,7 +527,7 @@ int compareName(FundOrg *firstOrg, FundOrg *secondOrg) {
     
 } //compareitor
 
-FundOrg findOrg(FundOrg **headPtr) {
+FundOrg* findOrg(FundOrg **headPtr) {
     
     
     FundOrg *found = NULL;
@@ -541,7 +560,7 @@ FundOrg findOrg(FundOrg **headPtr) {
     
     } //while not correct
     
-    return *found;
+    return found;
     
 }
 
